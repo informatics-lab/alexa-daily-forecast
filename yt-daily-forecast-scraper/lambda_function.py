@@ -28,7 +28,7 @@ def main():
         dl_yt_assets(yt_latest['url'])
         write_file_to_s3('latest_audio.mp4')
         write_file_to_s3('latest_video.mp4')
-        write_file_to_s3('latest.json')
+        write_json_to_s3('latest.json')
     else:
         print("current is latest, skipping update")
     print("FIN")
@@ -46,16 +46,24 @@ def get_s3_latest():
 
 def get_yt_latest():
     '''gets the latest video info from the yt playlist rss feed'''
-
     yt_playlist_rss_feed = urllib.request.urlopen(YT_URL).read().decode('ascii')
     xml_root_element = ET.fromstring(yt_playlist_rss_feed)
     xml_latest_entry = xml_root_element.find('{http://www.w3.org/2005/Atom}entry')
-    id = xml_latest_entry.find('{http://www.youtube.com/xml/schemas/2015}videoId').text
+    uid = xml_latest_entry.find('{http://www.youtube.com/xml/schemas/2015}videoId').text
     title = xml_latest_entry.find('{http://www.w3.org/2005/Atom}title').text
-    published_dt = xml_latest_entry.find('{http://www.w3.org/2005/Atom}published').text
-    updated_dt = xml_latest_entry.find('{http://www.w3.org/2005/Atom}updated').text
+    published_dt = xml_latest_entry.find('{http://www.w3.org/2005/Atom}published').text.replace('+00:00', '.0Z')
+    updated_dt = xml_latest_entry.find('{http://www.w3.org/2005/Atom}updated').text.replace('+00:00', '.0Z')
     url = xml_latest_entry.find('{http://www.w3.org/2005/Atom}link').attrib['href']
-    latest = {'id':id,'title':title,'published_dt':published_dt,'updated_dt':updated_dt,'url':url}
+    latest = {
+        'uid': uid,
+        'titleText': title,
+        'mainText': '',
+        'publishedDate': published_dt,
+        'updateDate': updated_dt,
+        'streamUrl': 'https://s3-eu-west-1.amazonaws.com/youtube-daily-forecast/latest_audio.mp4',
+        'redirectionUrl': 'https://www.metoffice.gov.uk/public/weather/forecast',
+        'url': url
+    }
     with open('/tmp/'+LATEST_KEY, 'w') as file:
         file.write(json.dumps(latest))
     return latest
@@ -63,7 +71,7 @@ def get_yt_latest():
 
 def is_latest(s3_latest, yt_latest):
     is_latest = False
-    if s3_latest['id'] == yt_latest['id']:
+    if s3_latest['uid'] == yt_latest['uid']:
         is_latest = True
     return is_latest
 
@@ -92,3 +100,6 @@ def dl_yt_audio(yt):
 def write_file_to_s3(filename):
     s3.meta.client.upload_file('/tmp/'+filename, BUCKET_NAME, filename, ExtraArgs={'ACL': 'public-read'})
 
+
+def write_json_to_s3(filename):
+    s3.meta.client.upload_file('/tmp/'+filename, BUCKET_NAME, filename, ExtraArgs={'ACL': 'public-read', 'ContentType': 'application/json'})
