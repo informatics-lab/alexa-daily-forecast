@@ -12,5 +12,7 @@ This functionality is only intended for use as a proof of concept.
 Install pytube:
 `$ pip install pytube -t .`
 
-Zip dir:
+Zip source code:
 `$ zip -r yt.zip .`
+
+Replace lambada with zip file.
