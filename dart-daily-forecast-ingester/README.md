@@ -9,5 +9,5 @@ This lambda will take this video file and create/update the following 3 files in
 Install moviepy:
 `$ pip install moviepy -t .`
 
-Zip dir:
-`$ zip -r dart.zip .`
+Zip & deploy:
+`$ ./deploy.sh`
