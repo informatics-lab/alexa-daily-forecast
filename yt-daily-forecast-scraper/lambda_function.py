@@ -61,6 +61,7 @@ def get_yt_latest():
         'publishedDate': published_dt,
         'updateDate': updated_dt,
         'streamUrl': 'https://s3-eu-west-1.amazonaws.com/youtube-daily-forecast/latest_audio.mp4',
+        'videoUrl': 'https://s3-eu-west-1.amazonaws.com/youtube-daily-forecast/latest_video.mp4',
         'redirectionUrl': 'https://www.metoffice.gov.uk/public/weather/forecast',
         'url': url
     }
