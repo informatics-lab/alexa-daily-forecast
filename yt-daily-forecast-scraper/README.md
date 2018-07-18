@@ -1,17 +1,16 @@
-
 # yt-daily-forecast-scraper
-Scrapes the latest forecast video/audio from Youtube and writes it to S3.
-Updates the latest.json file in S3 - also serves as the Alexa feed url.
-
-- Not suitable for production as downloading from Youtube is a no-no.
-
-## installation
-Clone repo.
-
+Triggered by CloudWatch events this lambda will scrape the youtube daily forecast playlist xml feed. 
+Checking against the public bucket's `latest.json` file if the feed has a different first entry this lambda will 
+create/update the following three files:   
+ - `latest_audio.mp3` - audio content from youtube latest video.
+ - `latest_video.mp4` - youtube latest video.
+ - `latest.json` - a json file used for the alexa daily briefing feed.
+ 
+This functionality is only intended for use as a proof of concept.
+ 
+### install / deploy
 Install pytube:
-`$ pip install pytube -t`
-
-## deployment
+`$ pip install pytube -t .`
 
 Zip source code:
 `$ zip -r yt.zip .`
