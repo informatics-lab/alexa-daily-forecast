@@ -28,7 +28,7 @@ def lambda_handler(event, context):
 
     # else if event started from sqs
     elif first_record['eventSource'] == 'aws:sqs':
-        first_record = first_record['body']
+        first_record = json.loads(first_record['body'])
         file_name = first_record['s3']['object']['key']
 
     else:

@@ -19,7 +19,7 @@ def lambda_handler(event, context):
     file_name = first_record['s3']['object']['key']
 
     if not file_name.startswith(latest_prefix):
-        print(f'renaming {file_name} to {latest_prefix +'_'+ file_name}')
+        print(f'renaming {file_name}')
         copy_and_delete_file(file_name)
         print('updating latest json')
         update_latest_json()
