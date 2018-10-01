@@ -1,11 +1,11 @@
 import sys
 sys.path.append('amos-latest-forecast-copy/src')
 
-import unittest.mock as mock
+from unittest.mock import patch
 
 
-@mock.patch('boto3')
-def test_regex():
+@patch('boto3.client')
+def test_regex(mock_boto3_client):
     from lambda_function import p
 
     assert p.match('METOFFICE_NATIONAL_MORNING_260918.mp4')
