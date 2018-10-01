@@ -34,9 +34,9 @@ def copy_and_delete_file(file_name):
     s3.delete_object(Bucket=source_bucket, Key=file_name)
 
 
-def update_latest_json():
+def generate_latest_json():
     now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.0Z")
-    latest = {
+    return {
         'uid': str(uuid.uuid4()),
         'titleText': 'UK Met Office Latest Forecast',
         'mainText': '',
@@ -46,7 +46,10 @@ def update_latest_json():
         'videoUrl': 'https://s3-eu-west-1.amazonaws.com/amos-latest-forecast/latest_video.mp4',
         'redirectionUrl': 'https://www.metoffice.gov.uk/public/weather/forecast'
     }
-    s3.put_object(Body = json.dumps(latest),
+
+
+def update_latest_json():
+    s3.put_object(Body = json.dumps(generate_latest_json()),
                   Bucket = destination_bucket,
                   Key = 'latest.json',
                   ACL = 'public-read',

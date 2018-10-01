@@ -1,4 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
+.python-version
+
+__pycache__
+.pytest_cache
 
 **/code.zip
