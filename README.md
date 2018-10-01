@@ -1,4 +1,4 @@
-# alexa-daily-forecast
+# alexa-daily-forecast [![Build Status](https://travis-ci.com/informatics-lab/alexa-daily-forecast.svg?branch=master)](https://travis-ci.com/informatics-lab/alexa-daily-forecast)
 Amazon Alexa Flash Briefing Skill for the UK Met Office daily forecast.
 
 ## amos-latest-forecast-copy / amos-latest-forecast-rename
