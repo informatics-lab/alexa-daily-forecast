@@ -8,3 +8,9 @@ install:
 script:
   - py.test amos-latest-forecast-copy
   - py.test amos-latest-forecast-rename
+
+deploy:
+  provider: script
+  script: bash scripts/deploy.sh
+  on:
+    branch: master
