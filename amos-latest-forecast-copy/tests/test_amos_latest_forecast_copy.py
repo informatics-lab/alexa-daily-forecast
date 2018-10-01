@@ -1,7 +1,10 @@
 import sys
 sys.path.append('amos-latest-forecast-copy/src')
 
+import unittest.mock as mock
 
+
+@mock.patch('boto3')
 def test_regex():
     from lambda_function import p
 

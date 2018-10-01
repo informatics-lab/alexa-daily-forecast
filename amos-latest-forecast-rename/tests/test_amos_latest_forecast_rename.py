@@ -1,7 +1,10 @@
 import sys
 sys.path.append('amos-latest-forecast-rename/src')
 
+import unittest.mock as mock
 
+
+@mock.patch('boto3')
 def test_generate_latest_json():
     from lambda_function import generate_latest_json
 
