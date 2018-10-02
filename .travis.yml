@@ -9,6 +9,9 @@ script:
   - py.test amos-latest-forecast-copy
   - py.test amos-latest-forecast-rename
 
+before_deploy:
+  - pip install awscli
+
 deploy:
   provider: script
   script: bash scripts/deploy.sh
