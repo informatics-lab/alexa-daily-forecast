@@ -3,13 +3,25 @@ import json
 import uuid
 from datetime import datetime
 from moviepy.editor import *
+import os
+import shutil
 
+
+ffmpeg = 'ffmpeg-linux64-v3.3.1'
 latest_prefix = 'latest'
 source_bucket = 'amos-latest-forecast-test'
 destination_bucket = 'amos-latest-forecast-test'#make into an environment variable to point at a different bucket
 
 s3 = boto3.client('s3')
 
+try:
+    if os.path.get(ffmpeg):
+        target_dir = os.path.join(os.environ.get('IMAGEIO_USERDIR', '~'), '.imageio', 'ffmpeg')
+        os.makedirs(target_dir, exist_ok=True)
+        shutil.move(ffmpeg, os.path.join(target_dir, os.path.basename(ffmpeg)))
+    print("Deploy ffmpeg")
+except IOError:
+    print("Failed to deploy ffmpeg")
 
 def lambda_handler(event, context):
 
@@ -57,15 +69,15 @@ def lambda_handler(event, context):
     print('FIN')
 
 def make_audio_from_new(file_name):
-    tmp_audio_file ='/tmp/' +file_name
+    tmp_audio_file = file_name+'.tmp'
     audio_file = AudioFileClip(file_name)
-    # audio_file.write_audiofile(tmp_audio_file, verbose=False, progress_bar=False, ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json', '-acodec', 'libmp3lame'])
+    #audio_file.write_audiofile(tmp_audio_file, verbose=False, progress_bar=False, ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json', '-acodec', 'libmp3lame'])
     audio_file.write_audiofile(tmp_audio_file, verbose=False, progress_bar=False, codec=None, ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json'])
     ptint(f'{tmp_audio_file} changed volume')
     return tmp_audio_file
 
 def make_video_from_new(file_name):
-    tmp_video_file ='/tmp/' +file_name
+    tmp_video_file = file_name+'.tmp'
     video_file = VideoFileClip(file_name)
     video_file.write_videofile(tmp_video_file, verbose=False, progress_bar=False, codec='libx264', temp_audiofile='/tmp/temp_audio.mp3', ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json', '-acodec', 'aac'])
     print(f'{tmp_video_file} changed volume')
