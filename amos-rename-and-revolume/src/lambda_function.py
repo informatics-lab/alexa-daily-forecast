@@ -31,7 +31,7 @@ def lambda_handler(event, context):
             print('made {}'.format(tmp_audio_file))
             # write new files to public s3 bucket
             print('writing files to {}'.format(destination_bucket))
-            write_file_to_s3(tmp_audio_file)
+            write_file_to_s3(tmp_audio_file, 'latest_audio.mp3')
             print('written {}'.format(tmp_audio_file))
             # file_name = audio_volume(file_name)
         elif file_name.startswith('video'):
@@ -43,7 +43,7 @@ def lambda_handler(event, context):
             print('made {}'.format(tmp_video_file))
             # write new files to public s3 bucket
             print('writing files to {}'.format(destination_bucket))
-            write_file_to_s3(tmp_video_file)
+            write_file_to_s3(tmp_video_file, 'latest_video.mp4')
             print('written {}'.format(tmp_video_file))
             # file_name = video_volume(file_name)
         else:
@@ -57,15 +57,16 @@ def lambda_handler(event, context):
     print('FIN')
 
 def make_audio_from_new(file_name):
-    tmp_audio_file ='/tmp/' +file_name
+    tmp_audio_file = file_name
+    #tmp_audio_file= '/tmp/' +file_name
     audio_file = AudioFileClip(file_name)
-    # audio_file.write_audiofile(tmp_audio_file, verbose=False, progress_bar=False, ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json', '-acodec', 'libmp3lame'])
-    audio_file.write_audiofile(tmp_audio_file, verbose=False, progress_bar=False, codec=None, ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json'])
+    audio_file.write_audiofile(tmp_audio_file, verbose=False, progress_bar=False, ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json', '-acodec', 'libmp3lame'])
+    # audio_file.write_audiofile(tmp_audio_file, verbose=False, progress_bar=False, codec=None, ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json'])
     ptint(f'{tmp_audio_file} changed volume')
     return tmp_audio_file
 
 def make_video_from_new(file_name):
-    tmp_video_file ='/tmp/' +file_name
+    tmp_video_file = file_name
     video_file = VideoFileClip(file_name)
     video_file.write_videofile(tmp_video_file, verbose=False, progress_bar=False, codec='libx264', temp_audiofile='/tmp/temp_audio.mp3', ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json', '-acodec', 'aac'])
     print(f'{tmp_video_file} changed volume')
@@ -78,13 +79,14 @@ def copy_and_delete_file(file_name):
     s3.delete_object(Bucket=source_bucket, Key=file_name)
 
 def get_file_from_s3(file_name):
-    tmp_new_file = '/tmp/'+file_name
-    print(f'dowloading {file_name} from {source_bucket} to {tmp_new_file}')
+    tmp_new_file = '/tmp/' +file_name
+    print(f' dowloading {file_name} from {source_bucket} to {tmp_new_file}')
     s3.download_file(source_bucket, file_name, tmp_new_file)
     return tmp_new_file
 
-def write_file_to_s3(file_to_write):
-    s3.upload_file(file_to_write, destination_bucket, ExtraArgs={'ACL': 'public-read'})
+def write_file_to_s3(file_name, key):
+    print(f' uploading {file_name} to {destination_bucket}')
+    s3.upload_file(file_name, destination_bucket, key, ExtraArgs={'ACL': 'public-read'})
 
 def generate_latest_json():
     now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.0Z")
