@@ -62,7 +62,7 @@ def make_audio_from_new(file_name):
     audio_file = AudioFileClip(file_name)
     audio_file.write_audiofile(tmp_audio_file, verbose=False, progress_bar=False, ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json', '-acodec', 'libmp3lame'])
     # audio_file.write_audiofile(tmp_audio_file, verbose=False, progress_bar=False, codec=None, ffmpeg_params=['-af', 'loudnorm=I=-14:TP=-3:LRA=11:print_format=json'])
-    ptint(f'{tmp_audio_file} changed volume')
+    print(f'{tmp_audio_file} changed volume')
     return tmp_audio_file
 
 def make_video_from_new(file_name):
