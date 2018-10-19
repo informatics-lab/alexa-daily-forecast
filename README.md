@@ -9,7 +9,7 @@ Amazon Alexa Flash Briefing Skill for the UK Met Office daily forecast.
 
 These lambdas function as part of the video ingest pipeline.
 
-### amos-latest-forecast-copy
+### amos-ingest-and-transcode
 
   - ~500mb video files sent to s3 ingest bucket from MO internal infrastructure.
     (morning forecast videos are sent in the afternoon of the day before)
