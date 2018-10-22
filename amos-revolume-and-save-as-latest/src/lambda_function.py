@@ -76,9 +76,22 @@ def get_file_from_s3(file_name):
     s3.download_file(source_bucket, file_name, tmp_new_file)
     return tmp_new_file
 
-def write_file_to_s3(file_name, key):
+def get_mime_from_name(filename):
+    mime = None
+    if filename.lower().endswith('mp4'):
+        mime = "video/mp4"
+    elif filename.lower().endswith('mp3'):
+        mime = "audio/mpeg"
+    return mime
+
+
+def write_file_to_s3(file_name, key, mime=None):
     print(f'Uploading {file_name} to {destination_bucket}/{key}')
-    s3.upload_file(file_name, destination_bucket, key, ExtraArgs={'ACL': 'public-read'})
+    mime = mime if mime else get_mime_from_name(file_name) 
+    extra_args = {'ACL': 'public-read'}
+    if mime:
+        extra_args['ContentType'] = mime
+    s3.upload_file(file_name, destination_bucket, key, ExtraArgs=extra_args)
 
 def generate_latest_json():
     now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.0Z")
